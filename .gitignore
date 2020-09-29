@@ -37,7 +37,7 @@ nbproject
 *.exe
 *.o
 *.so
-
+/keycloak-12.0.0-SNAPSHOT
 # Packages #
 ############
 # it's better to unpack these files and commit the raw source
