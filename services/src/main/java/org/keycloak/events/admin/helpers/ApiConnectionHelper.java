@@ -17,81 +17,58 @@ public class ApiConnectionHelper {
 		//convert json string to object
 		
     public String deleteExternalUser(String userEmail, String service) {
+        HttpURLConnection httpClient = null;
         if(service == "pagerduty"){
-            String userId = fetchPagerDutyUserId(userEmail);
-            return deletePagerDutyUser(userId);
+            try {          
+                String userId = fetchPagerDutyUserId(userEmail, httpClient);
+                return deletePagerDutyUser(userId, httpClient);
+            }
+            catch(IOException io){  
+                return  io.toString();
+            }
+            finally {
+                if (httpClient != null) {
+                    httpClient.disconnect();
+                }
+            }
         }
         return "No user-deletion follow-up trigger for SP: "+service;
     }
 
-    private String deletePagerDutyUser(String userId){
-        HttpURLConnection httpClient = null;
-        try {          
-            //DELETE REQUEST
-            httpClient = (HttpURLConnection) new URL(pagerdutyUrl+"/"+userId).openConnection();
-
-            httpClient.setRequestMethod("DELETE");
-            httpClient.setRequestProperty("User-Agent", "Mozilla/5.0");
-            httpClient.setRequestProperty("Accept", "application/vnd.pagerduty+json;version=2");
-            httpClient.setRequestProperty("Content-Type", "application/json");
-            httpClient.setRequestProperty("Authorization", "Token token="+System.getenv("pagerduty_token"));
-            BufferedReader in = new BufferedReader(new InputStreamReader(httpClient.getInputStream()));
-            StringBuilder response = new StringBuilder();
-            String line;
-
-            while ((line = in.readLine()) != null) {
-                response.append(line);
-            }
-
-            return response.toString();
-        }
-        catch(IOException io){  
-            return  io.toString();
-        }
-        finally {
-            if (httpClient != null) {
-                httpClient.disconnect();
-            }
-        }   
+    private String deletePagerDutyUser(String userId, HttpURLConnection httpClient) throws IOException{
+        httpClient = (HttpURLConnection) new URL(pagerdutyUrl+"/"+userId).openConnection();
+        httpClient.setRequestMethod("DELETE");  
+        return getResponse(httpClient);
     }
 
-    private String fetchPagerDutyUserId(String userEmail){
-        HttpURLConnection httpClient = null;
-        try {
-            httpClient = (HttpURLConnection) new URL(pagerdutyUrl+"?query="+userEmail)
-                .openConnection();
+    private String fetchPagerDutyUserId(String userEmail, HttpURLConnection httpClient) throws IOException{
+        httpClient = (HttpURLConnection) new URL(pagerdutyUrl+"?query="+userEmail)
+            .openConnection();
+        httpClient.setRequestMethod("GET");
 
-            //GET REQUEST FETCHING USER IDs
-            httpClient.setRequestMethod("GET");
-            httpClient.setRequestProperty("User-Agent", "Mozilla/5.0");
-            httpClient.setRequestProperty("Accept", "application/vnd.pagerduty+json;version=2");
-            httpClient.setRequestProperty("Content-Type", "application/json");
-            httpClient.setRequestProperty("Authorization", "Token token="+System.getenv("pagerduty_token"));
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
+        mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+        String jsonResponse = getResponse(httpClient);
+        Users userList = mapper.readValue(jsonResponse, Users.class);
+        
+        return userList.getUsers().get(0).getId();
+    }
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(httpClient.getInputStream()));
-            StringBuilder response = new StringBuilder();
-            String line;
+    private String getResponse(HttpURLConnection httpClient) throws IOException {
+        httpClient.setRequestProperty("User-Agent", "Mozilla/5.0");
+        httpClient.setRequestProperty("Accept", "application/vnd.pagerduty+json;version=2");
+        httpClient.setRequestProperty("Content-Type", "application/json");
+        httpClient.setRequestProperty("Authorization", "Token token="+System.getenv("pagerduty_token"));
+        BufferedReader in = new BufferedReader(new InputStreamReader(httpClient.getInputStream()));
+        StringBuilder response = new StringBuilder();
+        String line;
 
-            while ((line = in.readLine()) != null) {
-                response.append(line);
-            }
-            
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            mapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
-            mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
-            String jsonResponse = response.toString();
-            Users userList = mapper.readValue(jsonResponse, Users.class);
-            
-            return userList.getUsers().get(0).getId();
+        while ((line = in.readLine()) != null) {
+            response.append(line);
         }
-        catch(IOException io){  
-            return  io.toString();
-        }
-        finally {
-            if (httpClient != null) {
-                httpClient.disconnect();
-            }
-        }
+
+        return response.toString();
     }
 }
