@@ -18,12 +18,44 @@ public class ApiConnectionHelper {
 		
     public String deleteExternalUser(String userEmail, String service) {
         if(service == "pagerduty"){
-            return deletePagerDutyUser(userEmail);
+            String userId = fetchPagerDutyUserId(userEmail);
+            return deletePagerDutyUser(userId);
         }
         return "No user-deletion follow-up trigger for SP: "+service;
     }
 
-    private String deletePagerDutyUser(String userEmail){
+    private String deletePagerDutyUser(String userId){
+        HttpURLConnection httpClient = null;
+        try {          
+            //DELETE REQUEST
+            httpClient = (HttpURLConnection) new URL(pagerdutyUrl+"/"+userId).openConnection();
+
+            httpClient.setRequestMethod("DELETE");
+            httpClient.setRequestProperty("User-Agent", "Mozilla/5.0");
+            httpClient.setRequestProperty("Accept", "application/vnd.pagerduty+json;version=2");
+            httpClient.setRequestProperty("Content-Type", "application/json");
+            httpClient.setRequestProperty("Authorization", "Token token="+System.getenv("pagerduty_token"));
+            BufferedReader in = new BufferedReader(new InputStreamReader(httpClient.getInputStream()));
+            StringBuilder response = new StringBuilder();
+            String line;
+
+            while ((line = in.readLine()) != null) {
+                response.append(line);
+            }
+
+            return response.toString();
+        }
+        catch(IOException io){  
+            return  io.toString();
+        }
+        finally {
+            if (httpClient != null) {
+                httpClient.disconnect();
+            }
+        }   
+    }
+
+    private String fetchPagerDutyUserId(String userEmail){
         HttpURLConnection httpClient = null;
         try {
             httpClient = (HttpURLConnection) new URL(pagerdutyUrl+"?query="+userEmail)
@@ -34,7 +66,7 @@ public class ApiConnectionHelper {
             httpClient.setRequestProperty("User-Agent", "Mozilla/5.0");
             httpClient.setRequestProperty("Accept", "application/vnd.pagerduty+json;version=2");
             httpClient.setRequestProperty("Content-Type", "application/json");
-            httpClient.setRequestProperty("Authorization", System.getenv("pagerduty_token"));
+            httpClient.setRequestProperty("Authorization", "Token token="+System.getenv("pagerduty_token"));
 
             BufferedReader in = new BufferedReader(new InputStreamReader(httpClient.getInputStream()));
             StringBuilder response = new StringBuilder();
@@ -51,24 +83,7 @@ public class ApiConnectionHelper {
             String jsonResponse = response.toString();
             Users userList = mapper.readValue(jsonResponse, Users.class);
             
-            String userId = userList.getUsers().get(0).getId();
-            
-            //DELETE REQUEST
-            httpClient = (HttpURLConnection) new URL(pagerdutyUrl+"/"+userId).openConnection();
-
-            httpClient.setRequestMethod("DELETE");
-            httpClient.setRequestProperty("User-Agent", "Mozilla/5.0");
-            httpClient.setRequestProperty("Accept", "application/vnd.pagerduty+json;version=2");
-            httpClient.setRequestProperty("Content-Type", "application/json");
-            httpClient.setRequestProperty("Authorization", System.getenv("pagerduty_token"));
-            in = new BufferedReader(new InputStreamReader(httpClient.getInputStream()));
-            response = new StringBuilder();
-
-            while ((line = in.readLine()) != null) {
-                response.append(line);
-            }
-
-            return response.toString();
+            return userList.getUsers().get(0).getId();
         }
         catch(IOException io){  
             return  io.toString();
@@ -77,6 +92,6 @@ public class ApiConnectionHelper {
             if (httpClient != null) {
                 httpClient.disconnect();
             }
-        }   
+        }
     }
 }

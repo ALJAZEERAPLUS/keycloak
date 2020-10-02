@@ -47,7 +47,7 @@ public class AdminEventListenerProvider implements EventListenerProvider {
                 });
                 for (Map.Entry<String, List<String>> entry : user.getAttributes().entrySet()) {
                     if(entry.getKey() == "pagerduty"){
-                        this.httpHelper.deleteExternalUser(user.getEmail(), "pagerduty");
+                        log.info(this.httpHelper.deleteExternalUser(user.getEmail(), "pagerduty"));
                     }
                     for(String item : entry.getValue()){
                         log.info(item);
