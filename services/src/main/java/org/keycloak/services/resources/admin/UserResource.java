@@ -559,10 +559,10 @@ public class UserResource {
     @NoCache
     public Response deleteUser() {
         auth.users().requireManage(user);
-
+        UserRepresentation rep = this.getUser();
         boolean removed = new UserManager(session).removeUser(realm, user);
         if (removed) {
-            adminEvent.operation(OperationType.DELETE).resourcePath(session.getContext().getUri()).success();
+            adminEvent.operation(OperationType.DELETE).resourcePath(session.getContext().getUri()).representation(rep).success();
             return Response.noContent().build();
         } else {
             return ErrorResponse.error("User couldn't be deleted", Status.BAD_REQUEST);
