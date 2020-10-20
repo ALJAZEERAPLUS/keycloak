@@ -1,4 +1,5 @@
 FROM maven:3-alpine
 
-RUN sudo apt install node -y
-RUN sudo apt install npm -y
+RUN apt update \
+&& apt install node -y \
+&& apt install npm -y
