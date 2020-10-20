@@ -37,12 +37,11 @@ ENV MAVEN_HOME /opt/maven
 RUN apt-get clean
 
 # set shell variables for java installation
-RUN add-apt-repository ppa:openjdk-r/ppa
+RUN add-apt-repository -y ppa:openjdk-r/ppa
 RUN apt-get update
-RUN apt-get install openjdk-8-jdk
+RUN apt-get install -y openjdk-8-jdk
 RUN update-alternatives --config java
 RUN update-alternatives --config javac
 
 # install npm
-RUN apt-get update \
-&& apt-get install -y nodejs
+RUN apt-get install -y nodejs
