@@ -1,5 +1,3 @@
-FROM maven:3-alpine
+FROM maven:3.8-alpine
 
-RUN apt update \
-&& apt install node -y \
-&& apt install npm -y
+RUN apk add  --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.7/main/ nodejs=8.9.3-r1
