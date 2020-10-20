@@ -46,3 +46,4 @@ RUN update-alternatives --config javac
 RUN curl -sL https://deb.nodesource.com/setup_lts.x | bash -
 RUN apt-get install -y nodejs
 RUN apt-get install -y npm
+RUN chown -R 1000:1000 "/.npm"
