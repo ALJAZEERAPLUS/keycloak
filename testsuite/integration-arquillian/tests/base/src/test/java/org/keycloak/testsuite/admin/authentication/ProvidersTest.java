@@ -200,6 +200,9 @@ public class ProvidersTest extends AbstractAuthenticationTest {
                 "Testsuite Username authenticator.  Username parameter sets username");
         addProviderInfo(result, "webauthn-authenticator", "WebAuthn Authenticator", "Authenticator for WebAuthn. Usually used for WebAuthn two-factor authentication");
         addProviderInfo(result, "webauthn-authenticator-passwordless", "WebAuthn Passwordless Authenticator", "Authenticator for Passwordless WebAuthn authentication");
+        
+        addProviderInfo(result, "auth-require-role", "Require role",
+        "Flow fails if user doesn't have required role.");
 
         addProviderInfo(result, "auth-username-form", "Username Form",
                 "Selects a user from his username.");
