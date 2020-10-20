@@ -202,7 +202,7 @@ public class ProvidersTest extends AbstractAuthenticationTest {
         addProviderInfo(result, "webauthn-authenticator-passwordless", "WebAuthn Passwordless Authenticator", "Authenticator for Passwordless WebAuthn authentication");
         
         addProviderInfo(result, "auth-require-role", "Require role",
-        "Flow fails if user doesn't have required role.");
+        "Validates if user have required role.");
 
         addProviderInfo(result, "auth-username-form", "Username Form",
                 "Selects a user from his username.");
