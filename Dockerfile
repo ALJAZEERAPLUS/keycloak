@@ -48,12 +48,11 @@ RUN apt-get install -y nodejs
 RUN apt-get install -y npm
 
 #install sudo
-RUN apt-get update \
- && apt-get install -y sudo
+# RUN apt-get update \
+#  && apt-get install -y sudo
 
-RUN adduser --disabled-password --gecos '' docker
-RUN adduser docker sudo
-RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+# RUN adduser --disabled-password --gecos '' docker
+# RUN adduser docker sudo
+# RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
-USER docker
-RUN sudo chown -R 1000:1000 /.npm
+# USER docker

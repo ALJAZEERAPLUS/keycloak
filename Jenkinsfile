@@ -17,6 +17,7 @@ pipeline {
                     node -v
                     mvn --version
                     ls
+                    chown -R 1000:1000 /.npm
                 '''
             }
         }
