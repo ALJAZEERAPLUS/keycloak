@@ -33,6 +33,9 @@ RUN curl -sL https://deb.nodesource.com/setup_lts.x | bash -
 RUN apt-get install -y nodejs
 RUN apt-get install -y npm
 
+#install git
+RUN apt-get install git -y
+
 #install sudo
 # RUN apt-get update \
 #  && apt-get install -y sudo
