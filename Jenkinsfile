@@ -15,14 +15,14 @@ pipeline {
             steps {
                 sh '''#!/bin/bash
                     echo 'Init' 
-                    sudo apt update
-                    sudo apt install nodejs -y
-                    sudo apt install npm -y
-                    sudo dpkg --configure -a
-                    sudo apt -f install
-                    sudo apt full-upgrade
-                    sudo apt autoremove
-                    sudo apt clean
+                    apt update
+                    apt install nodejs -y
+                    apt install npm -y
+                    dpkg --configure -a
+                    apt -f install
+                    apt full-upgrade
+                    apt autoremove
+                    apt clean
                     ls
                 '''
             }
