@@ -1,7 +1,7 @@
 pipeline {
     agent {
         dockerfile true
-        label 'ucms-docker-agent'
+        //label 'ucms-docker-agent'
     }
     environment {
         VARS_FILE='./vars'
