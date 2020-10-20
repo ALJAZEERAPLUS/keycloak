@@ -28,7 +28,7 @@ pipeline {
             steps {
                 sh '''#!/bin/bash
                     echo "Building Keycloak"
-                    mvn -Pdistribution -pl distribution/server-dist -am -Dmaven.test.skip clean install
+                    mvn clean install -B -DskipTests -Pdistribution
                 '''
             }
         }
@@ -36,7 +36,7 @@ pipeline {
             steps {
                 sh '''#!/bin/bash
                     echo "Testing Keycloak"
-                    mvn -f testsuite/utils/pom.xml exec:java -Pkeycloak-server
+                    mvn clean install -B -Pauth-server-wildfly -DskipTests -f testsuite/pom.xml
                 '''
             }
         }
