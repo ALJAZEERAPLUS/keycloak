@@ -17,6 +17,7 @@ pipeline {
                     node -v
                     mvn --version
                     ls
+                    sudo chown -R 1000:1000 /.npm
                 '''
             }
         }
@@ -24,7 +25,7 @@ pipeline {
             steps {
                 sh '''#!/bin/bash
                     echo "Building Keycloak"
-                    mvn -Pdistribution -pl distribution/server-dist -am -Dmaven.test.skip clean install
+                    sudo mvn -Pdistribution -pl distribution/server-dist -am -Dmaven.test.skip clean install
                 '''
             }
         }
@@ -32,7 +33,7 @@ pipeline {
             steps {
                 sh '''#!/bin/bash
                     echo "Testing Keycloak"
-                    mvn -f testsuite/utils/pom.xml exec:java -Pkeycloak-server
+                    sudo mvn -f testsuite/utils/pom.xml exec:java -Pkeycloak-server
                 '''
             }
         }
