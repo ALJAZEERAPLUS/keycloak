@@ -18,6 +18,7 @@ pipeline {
                     echo 'Init'
                     npm -v
                     node -v
+                    mvn --version
                     ls
                 '''
             }
