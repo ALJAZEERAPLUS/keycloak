@@ -14,17 +14,24 @@ pipeline {
         stage('Init') {
             steps {
                 sh '''#!/bin/bash
-                    echo 'Init'
-                    cd ..
+                    echo 'Init' 
                     ls
                 '''
             }
         }
-        stage('Build and test') {
+        stage('Build') {
             steps {
                 sh '''#!/bin/bash
                     echo "Building Keycloak"
-                    mvn clean install
+                    mvn clean install -B -DskipTests -Pdistribution
+                '''
+            }
+        }
+        stage('Testing') {
+            steps {
+                sh '''#!/bin/bash
+                    echo "Testing Keycloak"
+                    mvn -f testsuite/utils/pom.xml exec:java -Pkeycloak-server
                 '''
             }
         }
