@@ -1,7 +1,7 @@
 pipeline {
     agent {
-        label 'ucms-docker-agent'
         dockerfile true
+        label 'ucms-docker-agent'
     }
     environment {
         VARS_FILE='./vars'
@@ -37,9 +37,6 @@ pipeline {
             }
         }
         stage('Deploy') {
-            agent {
-                label 'aws-serverless'
-            }
             steps {
                 script {
                     sh '''#!/bin/bash
