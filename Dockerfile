@@ -56,4 +56,4 @@ RUN adduser docker sudo
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 USER docker
-RUN chown -R 1000:1000 /.npm
+RUN sudo chown -R 1000:1000 /.npm
