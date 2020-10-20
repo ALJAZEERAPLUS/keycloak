@@ -23,7 +23,7 @@ pipeline {
             steps {
                 sh '''#!/bin/bash
                     echo "Building Keycloak"
-                    mvn clean install -B -DskipTests -Pdistribution
+                    mvn -Pdistribution -pl distribution/server-dist -am -Dmaven.test.skip clean install
                 '''
             }
         }
