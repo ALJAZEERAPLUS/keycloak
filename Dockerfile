@@ -37,7 +37,6 @@ ENV MAVEN_HOME /opt/maven
 RUN apt-get clean
 
 # set shell variables for java installation
-RUN add-apt-repository -y ppa:openjdk-r/ppa
 RUN apt-get update
 RUN apt-get install -y openjdk-8-jdk
 RUN update-alternatives --config java
