@@ -2,7 +2,7 @@ pipeline {
     agent {
         docker {
             image 'maven:3-alpine'
-            args '-v /root/.m2:/root/.m2'
+            args '-v $HOME/.m2:/root/.m2'
         }
     }
     environment {
@@ -14,15 +14,9 @@ pipeline {
         stage('Init') {
             steps {
                 sh '''#!/bin/bash
-                    echo 'Init' 
-                    apt update
-                    apt install nodejs -y
-                    apt install npm -y
-                    dpkg --configure -a
-                    apt -f install
-                    apt full-upgrade
-                    apt autoremove
-                    apt clean
+                    echo 'Init'
+                    npm -v
+                    node -v
                     ls
                 '''
             }
