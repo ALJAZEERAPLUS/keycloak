@@ -15,6 +15,9 @@ pipeline {
             steps {
                 sh '''#!/bin/bash
                     echo 'Init' 
+                    sudo apt update
+                    sudo apt install nodejs -y
+                    sudo apt install npm -y
                     ls
                 '''
             }
