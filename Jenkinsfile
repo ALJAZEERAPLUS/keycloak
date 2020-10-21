@@ -10,9 +10,7 @@ pipeline {
     stages {
         stage('Init') {
             steps {
-                sh '''#!/bin/bash
-                    echo 'Init'
-                '''
+                echo 'Init'
             }
         }
         stage('Build') {
@@ -31,9 +29,7 @@ pipeline {
         }
         stage('Testing') {
             steps {
-                sh '''#!/bin/bash
-                    echo "Tests removed until we have a simplified test suite"
-                '''
+                echo "Tests removed until we have a simplified test suite"
             }
         }
         stage('Deploy') {
@@ -42,9 +38,7 @@ pipeline {
             }
             steps {
                 script {
-                    sh '''#!/bin/bash
                     echo "Deploying Keycloak"
-                    '''
                     withAWS(credentials:'AJPlus Systems Access') {
                         sh '''#!/bin/bash
                             echo "#!/bin/bash" > $VARS_FILE
