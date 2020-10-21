@@ -69,7 +69,6 @@ pipeline {
                                         InstanceType=t2.micro \
                                         CreatorEmail=rosab@aljazeera.net \
                                         TeamEmail=Digital-Devops@aljazeera.net \
-                                        KeyName=${KeyName} \
                                         NewRelicKey=${NewRelicKey} \
                         '''
                     }
