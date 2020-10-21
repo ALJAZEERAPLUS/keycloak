@@ -30,7 +30,7 @@ pipeline {
         stage('Build') {
            agent {
                 dockerfile{
-                    dir '.'
+                    dir './'
                     label 'ucms-docker-agent'
                 }   
             }
