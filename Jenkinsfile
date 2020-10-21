@@ -1,4 +1,5 @@
 pipeline {
+    agent none
     environment {
         VARS_FILE='./vars'
         SECRETS_='Keycloak-Server/Keys'
