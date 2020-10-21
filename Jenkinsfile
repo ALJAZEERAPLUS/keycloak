@@ -46,14 +46,11 @@ pipeline {
                             aws --region eu-west-1 --output json secretsmanager get-secret-value --secret-id $SECRETS_KEYCLOAK | jq -r '.SecretString' | jq -r 'to_entries|map(.key+"="+.value|tostring)|.[]' >> $VARS_FILE
                             chmod +x $VARS_FILE
                             . $VARS_FILE
-                            echo ${AdminUsername}
-                            echo $AdminUsername
                             CF_TEMPLATE_PATH=`echo "${CF_TEMPLATE_PATH}" | sed -e 's/^[ \t]*//'`
                             stack_name=`basename ${CF_TEMPLATE_PATH} | cut -d'.' -f1`
                             aws cloudformation deploy \
                                 --template-file ${CF_TEMPLATE_PATH} \
                                 --stack-name ${stack_name} --region eu-west-1 \
-                                --role-arn ${SSMRole}\
                                 --tags  Name="${stack_name} CF Stack" \
                                         "Business / Service Owner"=Digital-DevOps@aljazeera.net \
                                         Purpose=Network \
