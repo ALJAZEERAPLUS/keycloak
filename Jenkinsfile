@@ -1,7 +1,6 @@
 pipeline {
     agent {
-        dockerfile true
-        //label 'ucms-docker-agent'
+        label 'ucms-docker-agent'
     }
     environment {
         VARS_FILE='./vars'
@@ -14,6 +13,9 @@ pipeline {
     }
     stages {
         stage('Init') {
+            agent {
+                dockerfile true
+            }
             steps {
                 sh '''#!/bin/bash
                     echo 'Init'
@@ -25,6 +27,9 @@ pipeline {
             }
         }
         stage('Build') {
+            agent {
+                dockerfile true
+            }
             steps {
                 sh '''#!/bin/bash
                     echo "Building Keycloak"
