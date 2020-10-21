@@ -211,10 +211,22 @@ Resources:
             sudo echo 'POSTGRE_ADDRESS=${DbInstance}' >> /env/environment
             sudo echo 'pagerduty_token=${PagerDutyKey}' >> /env/environment 
             sudo apt-get update
-            sudo apt install -y default-jre
             
             git clone https://github.com/ALJAZEERAPLUS/keycloak.git
             cd keycloak
+            wget --no-verbose -O /tmp/apache-maven-3.6.3.tar.gz http://archive.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
+
+            tar xzf /tmp/apache-maven-3.6.3.tar.gz -C /opt/
+            ln -s /opt/apache-maven-3.6.3 /opt/maven
+            ln -s /opt/maven/bin/mvn /usr/local/bin
+            rm -f /tmp/apache-maven-3.6.3.tar.gz
+            sudo echo 'MAVEN_HOME=/opt/maven' >> /env/environment
+
+            sudo apt-get clean
+            sudo apt-get update
+            sudo apt-get install -y openjdk-8-jdk
+            sudo update-alternatives --config java
+            sudo update-alternatives --config javac
             mvn -Pdistribution -pl distribution/server-dist -am -Dmaven.test.skip clean install
             tar xfz distribution/server-dist/target/keycloak-12.0.0-SNAPSHOT.tar.gz
             mv ./modules/postgresql keycloak-12.0.0-SNAPSHOT/modules/system/layers/keycloak/org/
