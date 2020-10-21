@@ -53,6 +53,7 @@ pipeline {
                             aws cloudformation deploy \
                                 --template-file ${CF_TEMPLATE_PATH} \
                                 --stack-name ${stack_name} --region eu-west-1 \
+                                --role-arn ${SSMRole}\
                                 --tags  Name="${stack_name} CF Stack" \
                                         "Business / Service Owner"=Digital-DevOps@aljazeera.net \
                                         Purpose=Network \
