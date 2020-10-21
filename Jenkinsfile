@@ -1,7 +1,4 @@
 pipeline {
-    agent {
-        label 'ucms-docker-agent'
-    }
     environment {
         VARS_FILE='./vars'
         SECRETS_='Keycloak-Server/Keys'
@@ -13,8 +10,11 @@ pipeline {
     }
     stages {
         stage('Init') {
-            agent {
-                dockerfile true
+           agent {
+                dockerfile{
+                    dir './Dockerfile'
+                    label 'ucms-docker-agent'
+                }   
             }
             steps {
                 sh '''#!/bin/bash
@@ -27,8 +27,11 @@ pipeline {
             }
         }
         stage('Build') {
-            agent {
-                dockerfile true
+           agent {
+                dockerfile{
+                    dir './Dockerfile'
+                    label 'ucms-docker-agent'
+                }   
             }
             steps {
                 sh '''#!/bin/bash
