@@ -9,19 +9,9 @@ pipeline {
     }
     stages {
         stage('Init') {
-           agent {
-                dockerfile{
-                    dir './Dockerfile'
-                    label 'ucms-docker-agent'
-                }   
-            }
             steps {
                 sh '''#!/bin/bash
                     echo 'Init'
-                    npm -v
-                    node -v
-                    mvn --version
-                    ls
                 '''
             }
         }
