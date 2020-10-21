@@ -35,8 +35,7 @@ pipeline {
         stage('Testing') {
             steps {
                 sh '''#!/bin/bash
-                    echo "Testing Keycloak"
-                    mvn clean install
+                    echo "Tests removed until we have a simplified test suite"
                 '''
             }
         }
