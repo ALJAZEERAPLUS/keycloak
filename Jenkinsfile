@@ -2,7 +2,7 @@ pipeline {
     agent none
     environment {
         VARS_FILE='./vars'
-        SECRETS_='Keycloak-Server/Keys'
+        SECRETS_KEYCLOAK='Keycloak-Server/Keys'
         CF_TEMPLATE_PATH='cloudformation/Keycloak-Server.yaml'
         HOME = "${WORKSPACE}"
         NPM_CONFIG_CACHE = "${WORKSPACE}/.npm"
@@ -43,7 +43,7 @@ pipeline {
                         sh '''#!/bin/bash
                             echo "#!/bin/bash" > $VARS_FILE
                             #secrets are only pulled from one region of an account so using --region arg in below
-                            aws --region eu-west-1 --output json secretsmanager get-secret-value --secret-id $SECRETS_WAZUH | jq -r '.SecretString' | jq -r 'to_entries|map(.key+"="+.value|tostring)|.[]' >> $VARS_FILE
+                            aws --region eu-west-1 --output json secretsmanager get-secret-value --secret-id $SECRETS_KEYCLOAK | jq -r '.SecretString' | jq -r 'to_entries|map(.key+"="+.value|tostring)|.[]' >> $VARS_FILE
                             chmod +x $VARS_FILE
                             . $VARS_FILE
                             CF_TEMPLATE_PATH=`echo "${CF_TEMPLATE_PATH}" | sed -e 's/^[ \t]*//'`
