@@ -13,7 +13,7 @@
      "filters":[],
      "cutoffTimestamp":1426057200000,
      "encoding":"UTF-8",
-     "pathExpression":"/home/ssm-user/keycloak-12.0.0-SNAPSHOT/standalone/log/*",
+     "pathExpression":"~/keycloak/keycloak-12.0.0-SNAPSHOT/standalone/log/*",
      "blacklist":[],
      "sourceType":"LocalFile"
    }]
