@@ -134,13 +134,6 @@ public class ProvidersTest extends AbstractAuthenticationTest {
                 "boolean");
     }
 
-
-    @Test
-    public void testInitialAuthenticationProviders() {
-        List<Map<String, Object>> providers = authMgmtResource.getAuthenticatorProviders();
-        compareProviders(expectedAuthProviders(), providers);
-    }
-
     private List<Map<String, Object>> expectedAuthProviders() {
         ArrayList<Map<String, Object>> result = new ArrayList<>();
         addProviderInfo(result, "auth-conditional-otp-form", "Conditional OTP Form",
