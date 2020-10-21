@@ -4,9 +4,7 @@ pipeline {
         VARS_FILE='./vars'
         SECRETS_='Keycloak-Server/Keys'
         CF_TEMPLATE_PATH='cloudformation/Keycloak-Server.yaml'
-        // Override HOME to WORKSPACE
         HOME = "${WORKSPACE}"
-        // or override default cache directory (~/.npm)
         NPM_CONFIG_CACHE = "${WORKSPACE}/.npm"
     }
     stages {
@@ -30,6 +28,7 @@ pipeline {
         stage('Build') {
            agent {
                 dockerfile{
+                    filename 'Dockerfile'
                     label 'ucms-docker-agent'
                 }   
             }
