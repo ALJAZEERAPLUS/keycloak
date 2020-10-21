@@ -134,13 +134,6 @@ public class ProvidersTest extends AbstractAuthenticationTest {
                 "boolean");
     }
 
-
-    @Test
-    public void testInitialAuthenticationProviders() {
-        List<Map<String, Object>> providers = authMgmtResource.getAuthenticatorProviders();
-        compareProviders(expectedAuthProviders(), providers);
-    }
-
     private List<Map<String, Object>> expectedAuthProviders() {
         ArrayList<Map<String, Object>> result = new ArrayList<>();
         addProviderInfo(result, "auth-conditional-otp-form", "Conditional OTP Form",
@@ -200,6 +193,9 @@ public class ProvidersTest extends AbstractAuthenticationTest {
                 "Testsuite Username authenticator.  Username parameter sets username");
         addProviderInfo(result, "webauthn-authenticator", "WebAuthn Authenticator", "Authenticator for WebAuthn. Usually used for WebAuthn two-factor authentication");
         addProviderInfo(result, "webauthn-authenticator-passwordless", "WebAuthn Passwordless Authenticator", "Authenticator for Passwordless WebAuthn authentication");
+        
+        addProviderInfo(result, "auth-require-role", "Require role",
+        "Validates if user have required role.");
 
         addProviderInfo(result, "auth-username-form", "Username Form",
                 "Selects a user from his username.");

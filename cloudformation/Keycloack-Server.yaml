@@ -1,0 +1,298 @@
+Description: >-
+  This template creates a 
+Parameters:
+  EnvironmentName:
+    Description: An environment name that will be prefixed to resource names
+    Type: String
+    AllowedValues:
+      - Non-Prod
+      - Prod
+      - Shared
+    Default: Shared
+  PagerDutyKey:
+    Description: API key for performing PagerDuty operations
+    Type: String
+  DbUsername:
+    Description: Username to be used for RDS
+    Type: String
+    NoEcho: true
+  DbInstance:
+    Description: RDS instance address
+    Type: String
+  DbPassword:
+    Description: Password to be used for RDS
+    Type: String
+    NoEcho: true
+  ProductName:
+    Description: A Product name that will be prefixed to resource names
+    Type: String
+    Default: keycloak
+  AdminUsername:
+    Description: Username to be used for Keycloak
+    Type: String
+    NoEcho: true
+  AdminPassword:
+    Description: Password to be used for Keycloak
+    Type: String
+    NoEcho: true
+  InstanceType:
+    Description: EC2 instance type
+    Type: String
+    Default: t2.micro
+    AllowedValues: [t2.nano, t2.micro, t2.small, t2.medium, t2.large, t2.xlarge, t2.2xlarge,
+      t3.nano, t3.micro, t3.small, t3.medium, t3.large, t3.xlarge, t3.2xlarge,
+      m4.large, m4.xlarge, m4.2xlarge, m4.4xlarge, m4.10xlarge,
+      m5.large, m5.xlarge, m5.2xlarge, m5.4xlarge,
+      c5.large, c5.xlarge, c5.2xlarge, c5.4xlarge, c5.9xlarge,
+      g3.8xlarge,
+      r5.large, r5.xlarge, r5.2xlarge, r5.4xlarge, r3.12xlarge,
+      i3.xlarge, i3.2xlarge, i3.4xlarge, i3.8xlarge,
+      d2.xlarge, d2.2xlarge, d2.4xlarge, d2.8xlarge]
+    ConstraintDescription: must be a valid EC2 instance type.
+  CreatorEmail:
+    Description: Creator e-mail of this stack
+    Type: String
+    Default: 'rosab@aljazeera.net'
+  TeamEmail:
+    Description: Team e-mail to send alerts to
+    Type: String
+    Default: 'Digital-Devops@aljazeera.net'
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
+    Type: String
+    Default: keycloak-pco
+    ConstraintDescription: Must be the name of an existing EC2 KeyPair.
+Mappings:
+  AWSRegionToAMI: # Ami Id in specific to be used for launching instance
+    eu-west-1:
+      AMIID: ami-0823c236601fef765
+  AWSRegionToVPCId: # VPC id in which instance to be launched
+    eu-west-1:
+      VPCId: vpc-900751f7
+  AWSRegionToSubnetId: # Private Subnet id in which instance to be launched
+    eu-west-1:
+      SubnetId: subnet-fda6ecb4
+      SubnetId2: subnet-f4efaf93
+      SubnetId3: subnet-324ac669
+Resources:
+  # LoadBalancerSecurityGroup:
+  #   Type: 'AWS::EC2::SecurityGroup'
+  #   Properties:
+  #     GroupName: !Sub '${ProductName}-${EnvironmentName}-LBSG'
+  #     GroupDescription: LB security group for Instance
+  #     VpcId: !FindInMap [AWSRegionToVPCId, !Ref 'AWS::Region', VPCId]
+  #     SecurityGroupIngress:
+  #       - IpProtocol: tcp
+  #         FromPort: '80'
+  #         ToPort: '80'
+  #         CidrIp: 0.0.0.0/0 
+  #         Description: 'LoadBalancer SG'
+  #       - IpProtocol: tcp
+  #         FromPort: '443'
+  #         ToPort: '443'
+  #         CidrIp: 0.0.0.0/0 
+  #         Description: 'LoadBalancer SG'
+  #     SecurityGroupEgress:
+  #       - IpProtocol: tcp
+  #         FromPort: '8080'
+  #         ToPort: '8080'
+  #         CidrIp: 0.0.0.0/0 
+  #         Description: 'LoadBalancer SG'
+  #       - IpProtocol: tcp
+  #         FromPort: '8443'
+  #         ToPort: '8443'
+  #         CidrIp: 0.0.0.0/0 
+  #         Description: 'LoadBalancer SG'
+  #     Tags:
+  #       - Key: Name
+  #         Value: !Sub '${ProductName}-${EnvironmentName}-LBSG'
+  #       - Key: Business / Service Owner
+  #         Value: !Ref TeamEmail
+  #       - Key: ProductID
+  #         Value: !Ref ProductName
+  #       - Key: Environment
+  #         Value: !Sub '${EnvironmentName}'
+  #       - Key: Purpose
+  #         Value: Network
+  #       - Key: CreatedBy
+  #         Value: !Ref CreatorEmail
+
+  InstanceSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    #DependsOn: 'LoadBalancerSecurityGroup'
+    Properties:
+      GroupName: !Sub '${ProductName}-${EnvironmentName}-SG'
+      GroupDescription:  Instance security group
+      VpcId: !FindInMap [AWSRegionToVPCId, !Ref 'AWS::Region', VPCId]
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '8080'
+          ToPort: '8080'
+          SourceSecurityGroupId: sg-0eaef8baa8db13293
+          Description: 'LoadBalancer SG'
+        - IpProtocol: tcp
+          FromPort: '8443'
+          ToPort: '8443'
+          SourceSecurityGroupId: sg-0eaef8baa8db13293
+          Description: 'LoadBalancer SG'
+        - IpProtocol: tcp
+          FromPort: '80'
+          ToPort: '80'
+          SourceSecurityGroupId: sg-0eaef8baa8db13293
+          Description: 'LoadBalancer SG'
+        - IpProtocol: tcp
+          FromPort: '443'
+          ToPort: '443'
+          SourceSecurityGroupId: sg-0eaef8baa8db13293
+          Description: 'LoadBalancer SG'
+        - IpProtocol: tcp
+          FromPort: '5432'
+          ToPort: '5432'
+          SourceSecurityGroupId: sg-0eaef8baa8db13293
+          Description: 'Postgre port'
+        - IpProtocol: tcp
+          FromPort: '5432'
+          ToPort: '5432'
+          SourceSecurityGroupId: sg-0ba859d829672d95f
+          Description: 'Postgre port'
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProductName}-${EnvironmentName}-SG'
+        - Key: Business / Service Owner
+          Value: !Ref TeamEmail
+        - Key: ProductID
+          Value: !Ref ProductName
+        - Key: Environment
+          Value: !Sub '${EnvironmentName}'
+        - Key: Purpose
+          Value: Network
+        - Key: CreatedBy
+          Value: !Ref CreatorEmail
+
+  Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      InstanceType: !Ref InstanceType
+      SecurityGroupIds:
+        - !GetAtt InstanceSecurityGroup.GroupId
+      KeyName: !Ref KeyName
+      ImageId: !FindInMap [AWSRegionToAMI, !Ref 'AWS::Region', AMIID]
+      SubnetId:
+        !FindInMap [AWSRegionToSubnetId, !Ref 'AWS::Region', SubnetId]
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProductName}-${EnvironmentName}'
+        - Key: Business / Service Owner
+          Value: !Ref TeamEmail
+        - Key: ProductID
+          Value: !Ref ProductName
+        - Key: Environment
+          Value: !Sub '${EnvironmentName}'
+        - Key: Purpose
+          Value: SSO
+        - Key: CreatedBy
+          Value: !Ref CreatorEmail
+      UserData:
+        Fn::Base64:
+          !Sub |
+            #!/bin/bash
+            sudo echo 'POSTGRE_USER=${DbUsername}' >> /env/environment
+            sudo echo 'POSTGRE_PASS=${DbPassword}' >> /env/environment
+            sudo echo 'POSTGRE_ADDRESS=${DbInstance}' >> /env/environment
+            sudo echo 'pagerduty_token=${PagerDutyKey}' >> /env/environment 
+            sudo apt-get update
+            sudo apt install -y default-jre
+            cd
+            wget https://downloads.jboss.org/keycloak/11.0.2/keycloak-11.0.2.tar.gz
+            tar -zxvf keycloak-11.0.2.tar.gz
+            cd keycloak-11.0.2/
+            ./bin/add-user-keycloak.sh -r master -u ${AdminUsername} -p ${AdminPassword}
+            PRIVATE_IP= ip -4 -o addr show dev eth0 |grep -Pom1 '(?<= inet )[0-9.]*'
+            nohup ./bin/standalone.sh -b `ip -4 -o addr show dev eth0 |grep -Pom1 '(?<= inet )[0-9.]*'` &
+            disown
+  # LoadBalancer:
+  #   Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer'
+  #   Properties:
+  #     Type: 'application' 
+  #     Scheme: 'internet-facing'
+  #     Subnets:
+  #       - !FindInMap [AWSRegionToSubnetId, !Ref 'AWS::Region', SubnetId]
+  #       - !FindInMap [AWSRegionToSubnetId, !Ref 'AWS::Region', SubnetId2]
+  #       - !FindInMap [AWSRegionToSubnetId, !Ref 'AWS::Region', SubnetId3]
+  #     SecurityGroups:
+  #       - !Ref LoadBalancerSecurityGroup
+  #     Tags:
+  #       - Key: Name
+  #         Value: !Sub '${ProductName}-${EnvironmentName}-LB'
+  #       - Key: Business / Service Owner
+  #         Value: !Ref TeamEmail
+  #       - Key: Purpose
+  #         Value: Network
+  #       - Key: ProductID
+  #         Value: !Ref ProductName
+  #       - Key: Environment
+  #         Value: !Sub '${EnvironmentName}'
+  
+  # HttpLoadBalancerListener:
+  #   Type: AWS::ElasticLoadBalancingV2::Listener
+  #   Properties:
+  #     LoadBalancerArn: !Ref LoadBalancer
+  #     Port: 80
+  #     Protocol: HTTP
+  #     DefaultActions:
+  #       - Type: forward
+  #         TargetGroupArn: !Ref HttpTargetGroup
+  
+  # HttpsLoadBalancerListener:
+  #   Type: AWS::ElasticLoadBalancingV2::Listener
+  #   Properties:
+  #     LoadBalancerArn: !Ref LoadBalancer
+  #     Port: 443
+  #     Protocol: HTTPS
+  #     Certificates: 
+  #       - CertificateArn: arn:aws:acm:eu-west-1:948308344496:certificate/1f971e82-d327-4b9a-9216-074b7cbd6743
+  #     DefaultActions:
+  #       - Type: forward
+  #         TargetGroupArn: !Ref HttpsTargetGroup
+  
+  # HttpTargetGroup:
+  #   Type: AWS::ElasticLoadBalancingV2::TargetGroup
+  #   Properties:
+  #     Name: !Sub ${EnvironmentName}-http2
+  #     VpcId: !FindInMap [AWSRegionToVPCId, !Ref 'AWS::Region', VPCId]
+  #     Port: 8080
+  #     Protocol: HTTP
+  #     Targets:
+  #       - Id: !Ref Instance
+  #     Tags:
+  #       - Key: Name
+  #         Value: !Sub '${ProductName}-${EnvironmentName}-LB-HttpTG'
+  #       - Key: Business / Service Owner
+  #         Value: !Ref TeamEmail
+  #       - Key: Purpose
+  #         Value: Network
+  #       - Key: ProductID
+  #         Value: !Ref ProductName
+  #       - Key: Environment
+  #         Value: !Sub '${EnvironmentName}'
+
+  # HttpsTargetGroup:
+  #   Type: AWS::ElasticLoadBalancingV2::TargetGroup
+  #   Properties:
+  #     Name: !Sub ${EnvironmentName}-https2
+  #     VpcId: !FindInMap [AWSRegionToVPCId, !Ref 'AWS::Region', VPCId]
+  #     Port: 8443
+  #     Protocol: HTTPS
+  #     Targets:
+  #       - Id: !Ref Instance
+  #     Tags:
+  #         - Key: Name
+  #           Value: !Sub '${ProductName}-${EnvironmentName}-LB-HttpsTG'
+  #         - Key: Business / Service Owner
+  #           Value: !Ref TeamEmail
+  #         - Key: Purpose
+  #           Value: Network
+  #         - Key: ProductID
+  #           Value: !Ref ProductName
+  #         - Key: Environment
+  #           Value: !Sub '${EnvironmentName}'
