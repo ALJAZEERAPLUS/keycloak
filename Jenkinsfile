@@ -66,7 +66,7 @@ pipeline {
                                         KeyName=${KeyName} \
                                         EnvironmentName=Shared \
                                         ProductName=Keycloak \
-                                        InstanceType=t2.micro \
+                                        InstanceType=t2.medium \
                                         CreatorEmail=rosab@aljazeera.net \
                                         TeamEmail=Digital-Devops@aljazeera.net \
                                         NewRelicKey=${NewRelicKey} \
