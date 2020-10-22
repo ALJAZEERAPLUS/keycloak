@@ -206,10 +206,10 @@ Resources:
             sudo apt-get update && \
             sudo apt-get install newrelic-infra -y
 
-            sudo echo 'POSTGRE_USER=${DbUsername}' >> /env/environment
-            sudo echo 'POSTGRE_PASS=${DbPassword}' >> /env/environment
-            sudo echo 'POSTGRE_ADDRESS=${DbInstance}' >> /env/environment
-            sudo echo 'pagerduty_token=${PagerDutyKey}' >> /env/environment 
+            sudo echo "POSTGRE_USER=${DbUsername}" >> /env/environment
+            sudo echo "POSTGRE_PASS=${DbPassword}" >> /env/environment
+            sudo echo "POSTGRE_ADDRESS=${DbInstance}" >> /env/environment
+            sudo echo "pagerduty_token=${PagerDutyKey}" >> /env/environment 
             sudo apt-get update
             
             git clone https://github.com/ALJAZEERAPLUS/keycloak.git
@@ -220,7 +220,7 @@ Resources:
             ln -s /opt/apache-maven-3.6.3 /opt/maven
             ln -s /opt/maven/bin/mvn /usr/local/bin
             rm -f /tmp/apache-maven-3.6.3.tar.gz
-            sudo echo 'MAVEN_HOME=/opt/maven' >> /env/environment
+            sudo echo "MAVEN_HOME=/opt/maven" >> /env/environment
 
             sudo apt-get clean
             sudo apt-get update
