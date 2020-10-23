@@ -65,6 +65,10 @@ Parameters:
   NewRelicKey:
     Description: New Relic key
     Type: String
+  InstanceSecurityGroup:
+    Description: Keycloak defualt security group
+    Type: String
+
 Mappings:
   AWSRegionToAMI: # Ami Id in specific to be used for launching instance
     eu-west-1:
@@ -119,65 +123,12 @@ Resources:
   #         Value: Network
   #       - Key: CreatedBy
   #         Value: !Ref CreatorEmail
-
-  InstanceSecurityGroup:
-    Type: 'AWS::EC2::SecurityGroup'
-    #DependsOn: 'LoadBalancerSecurityGroup'
-    Properties:
-      GroupName: !Sub '${ProductName}-${EnvironmentName}-SG'
-      GroupDescription:  Instance security group
-      VpcId: !FindInMap [AWSRegionToVPCId, !Ref 'AWS::Region', VPCId]
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: '8080'
-          ToPort: '8080'
-          SourceSecurityGroupId: sg-0eaef8baa8db13293
-          Description: 'LoadBalancer SG'
-        - IpProtocol: tcp
-          FromPort: '8443'
-          ToPort: '8443'
-          SourceSecurityGroupId: sg-0eaef8baa8db13293
-          Description: 'LoadBalancer SG'
-        - IpProtocol: tcp
-          FromPort: '80'
-          ToPort: '80'
-          SourceSecurityGroupId: sg-0eaef8baa8db13293
-          Description: 'LoadBalancer SG'
-        - IpProtocol: tcp
-          FromPort: '443'
-          ToPort: '443'
-          SourceSecurityGroupId: sg-0eaef8baa8db13293
-          Description: 'LoadBalancer SG'
-        - IpProtocol: tcp
-          FromPort: '5432'
-          ToPort: '5432'
-          SourceSecurityGroupId: sg-0eaef8baa8db13293
-          Description: 'Postgre port'
-        - IpProtocol: tcp
-          FromPort: '5432'
-          ToPort: '5432'
-          SourceSecurityGroupId: sg-0ba859d829672d95f
-          Description: 'Postgre port'
-      Tags:
-        - Key: Name
-          Value: !Sub '${ProductName}-${EnvironmentName}-SG'
-        - Key: Business / Service Owner
-          Value: !Ref TeamEmail
-        - Key: ProductID
-          Value: !Ref ProductName
-        - Key: Environment
-          Value: !Sub '${EnvironmentName}'
-        - Key: Purpose
-          Value: Network
-        - Key: CreatedBy
-          Value: !Ref CreatorEmail
-
   Instance:
     Type: 'AWS::EC2::Instance'
     Properties:
       InstanceType: !Ref InstanceType
       SecurityGroupIds:
-        - !GetAtt InstanceSecurityGroup.GroupId
+        - !Sub '${InstanceSecurityGroup}'
       KeyName: !Ref KeyName
       ImageId: !FindInMap [AWSRegionToAMI, !Ref 'AWS::Region', AMIID]
       SubnetId:

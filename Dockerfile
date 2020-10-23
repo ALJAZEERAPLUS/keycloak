@@ -35,13 +35,3 @@ RUN apt-get install -y npm
 
 #install git
 RUN apt-get install git -y
-
-#install sudo
-# RUN apt-get update \
-#  && apt-get install -y sudo
-
-# RUN adduser --disabled-password --gecos '' docker
-# RUN adduser docker sudo
-# RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-
-# USER docker
