@@ -68,11 +68,23 @@ public class ApiConnectionHelper {
             "\",\"role\": \""
             +userRole+
         "\"}}";
+        httpClient.setRequestMethod("PUT");
+        httpClient.setRequestProperty("User-Agent", "Mozilla/5.0");
+        httpClient.setRequestProperty("Accept", "application/vnd.pagerduty+json;version=2");
+        httpClient.setRequestProperty("Content-Type", "application/json");
+        httpClient.setRequestProperty("Authorization", "Token token="+System.getenv("pagerduty_token"));
         writer.write(payload);
         writer.flush();
         writer.close();
-        httpClient.setRequestMethod("PUT");
-        return getResponse(httpClient);
+        BufferedReader in = new BufferedReader(new InputStreamReader(httpClient.getInputStream()));
+        StringBuilder response = new StringBuilder();
+        String line;
+
+        while ((line = in.readLine()) != null) {
+            response.append(line);
+        }
+
+        return response.toString();
     }
 
     private String deletePagerDutyUser(String userId, HttpURLConnection httpClient) throws IOException{
