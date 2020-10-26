@@ -73,9 +73,9 @@ pipeline {
                     //                     InstanceSecurityGroup=${InstanceSecurityGroup} \
                     //     '''
                     // }
-                    sshagent (credentials:'Keycloak-CD') {
+                    sshagent (credentials:["Keycloak-CD"]) {
                         sh '''#!/bin/bash
-                            echo "hellowolrd" >> jenkinslog.txt
+                            echo "hello world" >> jenkinslog.txt
                             
                             // curl -s https://download.newrelic.com/infrastructure_agent/gpg/newrelic-infra.gpg | sudo apt-key add - && \
                             // echo "license_key: ${NewRelicKey}" | sudo tee -a /etc/newrelic-infra.yml && \
