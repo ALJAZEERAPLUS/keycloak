@@ -47,6 +47,7 @@ nbproject
 *.gz
 *.iso
 *.jar
+!modules/postgresql/main/postgresql-9.4.1212.jar
 *.rar
 *.tar
 *.zip

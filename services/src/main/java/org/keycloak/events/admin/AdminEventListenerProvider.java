@@ -57,6 +57,26 @@ public class AdminEventListenerProvider implements EventListenerProvider {
                 throw new RuntimeException(ioe);
             }
         } 
+        if(adminEvent.getResourceType().equals(ResourceType.USER)
+         && adminEvent.getOperationType().equals(OperationType.UPDATE)){
+            try {
+                UserRepresentation user = JsonSerialization.readValue(
+                    new ByteArrayInputStream(adminEvent.getRepresentation().getBytes()),
+                    new TypeReference<UserRepresentation>() {
+                });
+                for (Map.Entry<String, List<String>> entry : user.getAttributes().entrySet()) {
+                    if(entry.getKey() == "pagerduty_role"){
+                        for(String item : entry.getValue()){
+                            log.info(this.httpHelper.updateExternalUser(user.getEmail(), "pagerduty", item));
+                            log.info(item);
+                        }
+                    }
+                    
+                }                
+            } catch (IOException ioe) {
+                throw new RuntimeException(ioe);
+            }
+        } 
     }
 
     @Override
