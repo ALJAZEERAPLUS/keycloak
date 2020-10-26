@@ -3,6 +3,8 @@ package org.keycloak.events.admin.helpers;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -10,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 
 import org.keycloak.events.admin.helpers.pagerduty.Users;
+import org.keycloak.events.admin.helpers.pagerduty.User;
 
 public class ApiConnectionHelper {
     private String pagerdutyUrl = "https://api.pagerduty.com/users";
@@ -20,8 +23,8 @@ public class ApiConnectionHelper {
         HttpURLConnection httpClient = null;
         if(service == "pagerduty"){
             try {          
-                String userId = fetchPagerDutyUserId(userEmail, httpClient);
-                return deletePagerDutyUser(userId, httpClient);
+                User user = fetchPagerDutyUser(userEmail, httpClient);
+                return deletePagerDutyUser(user.getId(), httpClient);
             }
             catch(IOException io){  
                 return  io.toString();
@@ -35,13 +38,47 @@ public class ApiConnectionHelper {
         return "No user-deletion follow-up trigger for SP: "+service;
     }
 
+    public String updateExternalUser(String userEmail, String service, String userRole) {
+        HttpURLConnection httpClient = null;
+        if(service == "pagerduty"){
+            try {          
+                User user = fetchPagerDutyUser(userEmail, httpClient);
+                return updatePagerDutyUser(user, httpClient, userRole);
+            }
+            catch(IOException io){  
+                return  io.toString();
+            }
+            finally {
+                if (httpClient != null) {
+                    httpClient.disconnect();
+                }
+            }
+        }
+        return "No user-update follow-up trigger for SP: "+service;
+    }
+
+    private String updatePagerDutyUser(User user, HttpURLConnection httpClient, String userRole) throws IOException {
+        httpClient = (HttpURLConnection) new URL(pagerdutyUrl+"/"+user.getId()).openConnection();
+        OutputStreamWriter writer = new OutputStreamWriter(httpClient.getOutputStream());
+        String jsonBody = "{\"user\":{\"type\": \"user\",\"name\": \""
+            +user.getName()+
+            "\",\"email\": \""
+            +user.getEmail()+
+            "\",\"role\": \""
+            +userRole+
+        "\"}}";
+        writer.write(jsonBody);
+        httpClient.setRequestMethod("PUT");
+        return getResponse(httpClient);
+    }
+
     private String deletePagerDutyUser(String userId, HttpURLConnection httpClient) throws IOException{
         httpClient = (HttpURLConnection) new URL(pagerdutyUrl+"/"+userId).openConnection();
         httpClient.setRequestMethod("DELETE");  
         return getResponse(httpClient);
     }
 
-    private String fetchPagerDutyUserId(String userEmail, HttpURLConnection httpClient) throws IOException{
+    private User fetchPagerDutyUser(String userEmail, HttpURLConnection httpClient) throws IOException{
         httpClient = (HttpURLConnection) new URL(pagerdutyUrl+"?query="+userEmail)
             .openConnection();
         httpClient.setRequestMethod("GET");
@@ -53,7 +90,7 @@ public class ApiConnectionHelper {
         String jsonResponse = getResponse(httpClient);
         Users userList = mapper.readValue(jsonResponse, Users.class);
         
-        return userList.getUsers().get(0).getId();
+        return userList.getUsers().get(0);
     }
 
     private String getResponse(HttpURLConnection httpClient) throws IOException {
