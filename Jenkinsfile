@@ -74,7 +74,7 @@ pipeline {
                     //                     InstanceSecurityGroup=${InstanceSecurityGroup} \
                     //     '''
                     // }
-                    sshagent (credentials:["${CREDENTIALS}"]) {
+                    sshagent (credentials:[${CREDENTIALS}]) {
                         sh '''#!/bin/bash
                             echo "hello world" >> jenkinslog.txt
                             
