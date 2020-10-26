@@ -6,6 +6,7 @@ pipeline {
         CF_TEMPLATE_PATH='cloudformation/Keycloak-Server.yaml'
         HOME = "${WORKSPACE}"
         NPM_CONFIG_CACHE = "${WORKSPACE}/.npm"
+        CREDENTIALS='6ee01661-f84d-41fe-880b-05d047312c3c'
     }
     stages {
         stage('Init') {
@@ -73,7 +74,7 @@ pipeline {
                     //                     InstanceSecurityGroup=${InstanceSecurityGroup} \
                     //     '''
                     // }
-                    sshagent (credentials:["Keycloak-CD"]) {
+                    sshagent (credentials:["${CREDENTIALS}"]) {
                         sh '''#!/bin/bash
                             echo "hello world" >> jenkinslog.txt
                             

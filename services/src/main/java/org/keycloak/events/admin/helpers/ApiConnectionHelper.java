@@ -59,15 +59,18 @@ public class ApiConnectionHelper {
 
     private String updatePagerDutyUser(User user, HttpURLConnection httpClient, String userRole) throws IOException {
         httpClient = (HttpURLConnection) new URL(pagerdutyUrl+"/"+user.getId()).openConnection();
+        httpClient.setDoOutput(true);
         OutputStreamWriter writer = new OutputStreamWriter(httpClient.getOutputStream());
-        String jsonBody = "{\"user\":{\"type\": \"user\",\"name\": \""
+        String payload = "{\"user\":{\"type\": \"user\",\"name\": \""
             +user.getName()+
             "\",\"email\": \""
             +user.getEmail()+
             "\",\"role\": \""
             +userRole+
         "\"}}";
-        writer.write(jsonBody);
+        writer.write(payload);
+        writer.flush();
+        writer.close();
         httpClient.setRequestMethod("PUT");
         return getResponse(httpClient);
     }
