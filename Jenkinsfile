@@ -50,7 +50,7 @@ pipeline {
                                 echo `aws --region eu-west-1 ec2 describe-instances --filters "Name=tag:Name,Values=Keycloak-Shared" \
                                 --query "Reservations[*].Instances[*].PublicIpAddress" \
                                 --output=text`
-                                INSTANCE_ADDRESS = `aws --region eu-west-1 ec2 describe-instances --filters "Name=tag:Name,Values=Keycloak-Shared" \
+                                export INSTANCE_ADDRESS=`aws --region eu-west-1 ec2 describe-instances --filters "Name=tag:Name,Values=Keycloak-Shared" \
                                 --query "Reservations[*].Instances[*].PublicIpAddress" \
                                 --output=text`
                                 ssh ubuntu@$INSTANCE_ADDRESS "echo "hello world" >> jenkinslog.txt"                             
