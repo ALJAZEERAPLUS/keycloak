@@ -87,8 +87,9 @@ pipeline {
                                 export INSTANCE_ADDRESS=`aws --region eu-west-1 ec2 describe-instances --filters "Name=tag:Name,Values=Keycloak-Shared" \
                                 --query "Reservations[*].Instances[*].PublicIpAddress" \
                                 --output=text`
+                                ls
                                 ssh -o StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS "echo "hello world" >> jenkinslog.txt"                             
-                                scp -o ./keycloak-12.0.0-SNAPSHOT.tar.gz StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
+                                scp -o keycloak-12.0.0-SNAPSHOT.tar.gz StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
                             '''                        
                         }
                     }
