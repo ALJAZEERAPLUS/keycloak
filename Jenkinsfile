@@ -88,9 +88,9 @@ pipeline {
                                 echo $INSTANCE_ADDRESS     
                                 ssh -o StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS uptime
                                 ssh -v ubuntu@$INSTANCE_ADDRESS
-                                scp -o StrictHostKeyChecking=no distribution/server-dist/target/keycloak-12.0.0-SNAPSHOT.tar.gz StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
-                                scp -o StrictHostKeyChecking=no modules/standalone.xml StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
-                                scp -o StrictHostKeyChecking=no -r modules/postgresql StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
+                                scp distribution/server-dist/target/keycloak-12.0.0-SNAPSHOT.tar.gz StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
+                                scp modules/standalone.xml StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
+                                scp -r modules/postgresql StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
                             '''                        
                         }
                     }
