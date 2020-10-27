@@ -53,7 +53,7 @@ pipeline {
                                 export INSTANCE_ADDRESS=`aws --region eu-west-1 ec2 describe-instances --filters "Name=tag:Name,Values=Keycloak-Shared" \
                                 --query "Reservations[*].Instances[*].PublicIpAddress" \
                                 --output=text`
-                                ssh -vvv -o StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS "echo "hello world" >> jenkinslog.txt"                             
+                                ssh -o StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS "echo "hello world" >> jenkinslog.txt"                             
                             '''                        
                         }
                         // sh '''#!/bin/bash
