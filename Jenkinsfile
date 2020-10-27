@@ -79,7 +79,7 @@ pipeline {
                                         CreatorEmail=rosab@aljazeera.net \
                                         TeamEmail=Digital-Devops@aljazeera.net \
                                         NewRelicKey=${NewRelicKey} \
-                                        InstanceSecurityGroup=${InstanceSecurityGroup} \
+                                        InstanceSecurityGroup=${InstanceSecurityGroup}
                                     
                                 export INSTANCE_ADDRESS=`aws --region eu-west-1 ec2 describe-instances --filters "Name=tag:Name,Values=Keycloak-Shared" \
                                 --query "Reservations[*].Instances[*].PublicIpAddress" \
