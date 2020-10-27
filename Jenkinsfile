@@ -80,9 +80,6 @@ pipeline {
                                         TeamEmail=Digital-Devops@aljazeera.net \
                                         NewRelicKey=${NewRelicKey} \
                                         InstanceSecurityGroup=${InstanceSecurityGroup} \
-
-                                ls
-                                echo `curl checkip.amazonaws.com`
                                 export INSTANCE_ADDRESS=`aws --region eu-west-1 ec2 describe-instances --filters "Name=tag:Name,Values=Keycloak-Shared" \
                                 --query "Reservations[*].Instances[*].PublicIpAddress" \
                                 --output=text`
@@ -90,6 +87,13 @@ pipeline {
                                 scp -o StrictHostKeyChecking=no distribution/server-dist/target/keycloak-12.0.0-SNAPSHOT.tar.gz ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
                                 scp -o StrictHostKeyChecking=no modules/standalone.xml ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
                                 scp -o StrictHostKeyChecking=no -r modules/postgresql ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
+                                ssh -o StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS "
+                                    tar xfz --overwrite keycloak-12.0.0-SNAPSHOT.tar.gz
+                                    mv postgresql keycloak-12.0.0-SNAPSHOT/modules/system/layers/keycloak/org/
+                                    mv -f standalone.xml keycloak-12.0.0-SNAPSHOT/standalone/configuration/
+                                    ./keycloak-12.0.0-SNAPSHOT/bin/add-user-keycloak.sh -r master -u ${AdminUsername} -p ${AdminPassword}
+                                    nohup ./keycloak-12.0.0-SNAPSHOT/bin/standalone.sh -b `ip -4 -o addr show dev eth0 |grep -Pom1 '(?<= inet )[0-9.]*'` &
+                                "
                             '''                        
                         }
                     }
