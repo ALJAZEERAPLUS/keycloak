@@ -85,15 +85,20 @@ pipeline {
                                 --query "Reservations[*].Instances[*].PublicIpAddress" \
                                 --output=text`
                                 echo $INSTANCE_ADDRESS
-                                scp -o StrictHostKeyChecking=no distribution/server-dist/target/keycloak-12.0.0-SNAPSHOT.tar.gz ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
-                                scp -o StrictHostKeyChecking=no modules/standalone.xml ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
-                                scp -o StrictHostKeyChecking=no -r modules/postgresql ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
                                 ssh -o StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS "
-                                    tar xfz keycloak-12.0.0-SNAPSHOT.tar.gz 
-                                    mv postgresql keycloak-12.0.0-SNAPSHOT/modules/system/layers/keycloak/org/
-                                    mv -f standalone.xml keycloak-12.0.0-SNAPSHOT/standalone/configuration/
-                                    ./keycloak-12.0.0-SNAPSHOT/bin/add-user-keycloak.sh -r master -u ${AdminUsername} -p ${AdminPassword}
-                                    nohup ./keycloak-12.0.0-SNAPSHOT/bin/standalone.sh -b `ip -4 -o addr show dev eth0 |grep -Pom1 '(?<= inet )[0-9.]*'` &
+                                    if [ ! -d "keycloak" ] ; then
+                                        git clone https://github.com/ALJAZEERAPLUS/keycloak.git
+                                    else
+                                        cd "keycloak"
+                                        git pull
+                                    fi
+                                    sudo mvn -Pdistribution -pl distribution/server-dist -am -Dmaven.test.skip clean install
+                                    sudo tar xfz distribution/server-dist/target/keycloak-12.0.0-SNAPSHOT.tar.gz
+                                    sudo mv ./modules/postgresql keycloak-12.0.0-SNAPSHOT/modules/system/layers/keycloak/org/
+                                    sudo rm keycloak-12.0.0-SNAPSHOT/standalone/configuration/standalone.xml
+                                    sudo mv ./modules/standalone.xml keycloak-12.0.0-SNAPSHOT/standalone/configuration/
+                                    sudo ./keycloak-12.0.0-SNAPSHOT/bin/add-user-keycloak.sh -r master -u ${AdminUsername} -p ${AdminPassword}
+                                    nohup sudo ./keycloak-12.0.0-SNAPSHOT/bin/standalone.sh -b `ip -4 -o addr show dev eth0 |grep -Pom1 '(?<= inet )[0-9.]*'` &
                                 "
                             '''                        
                         }
