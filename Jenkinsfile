@@ -25,7 +25,7 @@ pipeline {
                     echo "Building Keycloak"
                     mvn -Pdistribution -pl distribution/server-dist -am -Dmaven.test.skip clean install
                 '''
-                stash includes: 'distribution/server-dist/target/keycloak-12.0.0-SNAPSHOT.tar.gz' name: 'server'
+                stash includes: 'distribution/server-dist/target/keycloak-12.0.0-SNAPSHOT.tar.gz', name: 'server'
             }
         }
         stage('Testing') {
@@ -42,6 +42,7 @@ pipeline {
                     echo "Deploying Keycloak"
                     withAWS(credentials:'AJPlus Systems Access') {
                         sshagent (credentials:["6ee01661-f84d-41fe-880b-05d047312c3c"]) {
+                            unstash 'server'
                             sh '''#!/bin/bash
                                 echo "#!/bin/bash" > $VARS_FILE
                                 #secrets are only pulled from one region of an account so using --region arg in below
