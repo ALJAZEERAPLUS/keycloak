@@ -89,7 +89,7 @@ pipeline {
                                 --output=text`
                                 ls
                                 ssh -o StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS "echo "hello world" >> jenkinslog.txt"                             
-                                scp -o distribution/server-dist/target/keycloak-12.0.0-SNAPSHOT.tar.gz StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
+                                scp -o StrictHostKeyChecking=no distribution/server-dist/target/keycloak-12.0.0-SNAPSHOT.tar.gz StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
                             '''                        
                         }
                     }
