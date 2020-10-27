@@ -82,6 +82,7 @@ pipeline {
                                         InstanceSecurityGroup=${InstanceSecurityGroup} \
 
                                 ls
+                                echo curl checkip.amazonaws.com
                                 export INSTANCE_ADDRESS=`aws --region eu-west-1 ec2 describe-instances --filters "Name=tag:Name,Values=Keycloak-Shared" \
                                 --query "Reservations[*].Instances[*].PublicIpAddress" \
                                 --output=text`
