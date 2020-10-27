@@ -47,10 +47,10 @@ pipeline {
                                 aws --region eu-west-1 --output json secretsmanager get-secret-value --secret-id $SECRETS_KEYCLOAK | jq -r '.SecretString' | jq -r 'to_entries|map(.key+"="+.value|tostring)|.[]' >> $VARS_FILE
                                 chmod +x $VARS_FILE
                                 . $VARS_FILE
-                                echo `aws --region eu-west-1 ec2 describe-instances --filters "Name=Keycloak-Shared" \
+                                echo `aws --region eu-west-1 ec2 describe-instances --filters "Name=tag:Name,Values=Keycloak-Shared" \
                                 --query "Reservations[*].Instances[*].PublicIpAddress" \
                                 --output=text`
-                                INSTANCE_ADDRESS = `aws --region eu-west-1 ec2 describe-instances --filters "Name=Keycloak-Shared" \
+                                INSTANCE_ADDRESS = `aws --region eu-west-1 ec2 describe-instances --filters "Name=tag:Name,Values=Keycloak-Shared" \
                                 --query "Reservations[*].Instances[*].PublicIpAddress" \
                                 --output=text`
                                 ssh ubuntu@$INSTANCE_ADDRESS "echo "hello world" >> jenkinslog.txt"                             
