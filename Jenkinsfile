@@ -26,6 +26,8 @@ pipeline {
                     mvn -Pdistribution -pl distribution/server-dist -am -Dmaven.test.skip clean install
                 '''
                 stash includes: 'distribution/server-dist/target/keycloak-12.0.0-SNAPSHOT.tar.gz', name: 'server'
+                stash includes: 'modules/standalone.xml', name: 'config'
+                stash includes: 'modules/postgresql/main/*', name: 'postgresql'
             }
         }
         stage('Testing') {
@@ -43,6 +45,8 @@ pipeline {
                     withAWS(credentials:'AJPlus Systems Access') {
                         sshagent (credentials:["6ee01661-f84d-41fe-880b-05d047312c3c"]) {
                             unstash 'server'
+                            unstash 'config'
+                            unstash 'postgresql'
                             sh '''#!/bin/bash
                                 echo "#!/bin/bash" > $VARS_FILE
                                 #secrets are only pulled from one region of an account so using --region arg in below
@@ -84,6 +88,7 @@ pipeline {
                                 --query "Reservations[*].Instances[*].PublicIpAddress" \
                                 --output=text`
                                 ssh -o StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS "echo "hello world" >> jenkinslog.txt"                             
+                                scp -o ./keycloak-12.0.0-SNAPSHOT.tar.gz StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
                             '''                        
                         }
                     }
