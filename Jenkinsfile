@@ -82,13 +82,12 @@ pipeline {
                                         InstanceSecurityGroup=${InstanceSecurityGroup} \
 
                                 ls
-                                echo curl checkip.amazonaws.com
+                                echo `curl checkip.amazonaws.com`
                                 export INSTANCE_ADDRESS=`aws --region eu-west-1 ec2 describe-instances --filters "Name=tag:Name,Values=Keycloak-Shared" \
                                 --query "Reservations[*].Instances[*].PublicIpAddress" \
                                 --output=text`
                                 echo $INSTANCE_ADDRESS     
                                 ssh -o StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS uptime
-                                ssh -v ubuntu@$INSTANCE_ADDRESS
                                 scp distribution/server-dist/target/keycloak-12.0.0-SNAPSHOT.tar.gz StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
                                 scp modules/standalone.xml StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
                                 scp -r modules/postgresql StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
