@@ -86,10 +86,11 @@ pipeline {
                                 --output=text`
                                 echo $INSTANCE_ADDRESS
                                 ssh -o StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS "
-                                    if [ ! -d "keycloak" ] ; then
+                                    if [ ! -d keycloak ] ; then
                                         git clone https://github.com/ALJAZEERAPLUS/keycloak.git
+                                        cd keycloak
                                     else
-                                        cd "keycloak"
+                                        cd keycloak
                                         git pull
                                     fi
                                     sudo mvn -Pdistribution -pl distribution/server-dist -am -Dmaven.test.skip clean install
