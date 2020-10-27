@@ -53,7 +53,7 @@ pipeline {
                                 export INSTANCE_ADDRESS=`aws --region eu-west-1 ec2 describe-instances --filters "Name=tag:Name,Values=Keycloak-Shared" \
                                 --query "Reservations[*].Instances[*].PublicIpAddress" \
                                 --output=text`
-                                ssh ubuntu@$INSTANCE_ADDRESS "echo "hello world" >> jenkinslog.txt"                             
+                                ssh -vvv -o StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS "echo "hello world" >> jenkinslog.txt"                             
                             '''                        
                         }
                         // sh '''#!/bin/bash
@@ -65,6 +65,7 @@ pipeline {
                         //     CF_TEMPLATE_PATH=`echo "${CF_TEMPLATE_PATH}" | sed -e 's/^[ \t]*//'`
                         //     stack_name=`basename ${CF_TEMPLATE_PATH} | cut -d'.' -f1`
                         //     aws cloudformation deploy \
+                        //         --no-fail-on-empty-changeset \
                         //         --template-file ${CF_TEMPLATE_PATH} \
                         //         --stack-name ${stack_name} --region eu-west-1 \
                         //         --tags  Name="${stack_name} CF Stack" \
