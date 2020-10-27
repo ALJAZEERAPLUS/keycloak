@@ -6,6 +6,7 @@ pipeline {
         CF_TEMPLATE_PATH='cloudformation/Keycloak-Server.yaml'
         HOME = "${WORKSPACE}"
         NPM_CONFIG_CACHE = "${WORKSPACE}/.npm"
+        CREDENTIALS='6ee01661-f84d-41fe-880b-05d047312c3c'
     }
     stages {
         stage('Init') {
@@ -73,9 +74,9 @@ pipeline {
                     //                     InstanceSecurityGroup=${InstanceSecurityGroup} \
                     //     '''
                     // }
-                    sshagent (credentials:'Keycloak-CD') {
+                    sshagent (credentials:["6ee01661-f84d-41fe-880b-05d047312c3c"]) {
                         sh '''#!/bin/bash
-                            echo "hellowolrd" >> jenkinslog.txt
+                            echo "hello world" >> jenkinslog.txt
                             
                             // curl -s https://download.newrelic.com/infrastructure_agent/gpg/newrelic-infra.gpg | sudo apt-key add - && \
                             // echo "license_key: ${NewRelicKey}" | sudo tee -a /etc/newrelic-infra.yml && \
