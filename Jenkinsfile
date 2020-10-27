@@ -89,7 +89,7 @@ pipeline {
                                 scp -o StrictHostKeyChecking=no modules/standalone.xml ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
                                 scp -o StrictHostKeyChecking=no -r modules/postgresql ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
                                 ssh -o StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS "
-                                    tar --overwrite xfz keycloak-12.0.0-SNAPSHOT.tar.gz 
+                                    tar -xfz keycloak-12.0.0-SNAPSHOT.tar.gz 
                                     mv postgresql keycloak-12.0.0-SNAPSHOT/modules/system/layers/keycloak/org/
                                     mv -f standalone.xml keycloak-12.0.0-SNAPSHOT/standalone/configuration/
                                     ./keycloak-12.0.0-SNAPSHOT/bin/add-user-keycloak.sh -r master -u ${AdminUsername} -p ${AdminPassword}
