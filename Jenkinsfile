@@ -86,11 +86,10 @@ pipeline {
                                 export INSTANCE_ADDRESS=`aws --region eu-west-1 ec2 describe-instances --filters "Name=tag:Name,Values=Keycloak-Shared" \
                                 --query "Reservations[*].Instances[*].PublicIpAddress" \
                                 --output=text`
-                                echo $INSTANCE_ADDRESS     
-                                ssh -o StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS uptime
-                                scp distribution/server-dist/target/keycloak-12.0.0-SNAPSHOT.tar.gz StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
-                                scp modules/standalone.xml StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
-                                scp -r modules/postgresql StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
+                                echo $INSTANCE_ADDRESS
+                                scp -o StrictHostKeyChecking=no distribution/server-dist/target/keycloak-12.0.0-SNAPSHOT.tar.gz ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
+                                scp -o StrictHostKeyChecking=no modules/standalone.xml ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
+                                scp -o StrictHostKeyChecking=no -r modules/postgresql ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
                             '''                        
                         }
                     }
