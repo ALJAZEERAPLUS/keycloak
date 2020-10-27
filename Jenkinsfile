@@ -74,13 +74,11 @@ pipeline {
                     //     '''
                     // }
                     sshagent (credentials:["6ee01661-f84d-41fe-880b-05d047312c3c"]) {
-                        dir('/home/ubuntu'){
                             sh '''#!/bin/bash
+                                cd /home/ubuntu
                                 echo "hello world" >> jenkinslog.txt
                                
-                            '''
-                        }
-                        
+                            '''                        
                     }
                 }
             }
