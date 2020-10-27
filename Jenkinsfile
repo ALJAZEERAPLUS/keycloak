@@ -25,6 +25,7 @@ pipeline {
                     echo "Building Keycloak"
                     mvn -Pdistribution -pl distribution/server-dist -am -Dmaven.test.skip clean install
                 '''
+                stash includes: 'distribution/server-dist/target/keycloak-12.0.0-SNAPSHOT.tar.gz' name: 'server'
             }
         }
         stage('Testing') {

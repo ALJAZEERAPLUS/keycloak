@@ -146,35 +146,35 @@ Resources:
           Value: SSO
         - Key: CreatedBy
           Value: !Ref CreatorEmail
-        UserData:
-          Fn::Base64:
-            !Sub |
-              #!/bin/bash
-              cd /home/ubuntu
-              curl -s https://download.newrelic.com/infrastructure_agent/gpg/newrelic-infra.gpg | sudo apt-key add - && \
-              echo "license_key: ${NewRelicKey}" | sudo tee -a /etc/newrelic-infra.yml && \
-              printf "deb [arch=amd64] https://download.newrelic.com/infrastructure_agent/linux/apt bionic main" | sudo tee -a /etc/apt/sources.list.d/newrelic-infra.list && \
-              sudo apt-get update && \
-              sudo apt-get install newrelic-infra -y
+      UserData:
+        Fn::Base64:
+          !Sub |
+            #!/bin/bash
+            cd /home/ubuntu
+            curl -s https://download.newrelic.com/infrastructure_agent/gpg/newrelic-infra.gpg | sudo apt-key add - && \
+            echo "license_key: ${NewRelicKey}" | sudo tee -a /etc/newrelic-infra.yml && \
+            printf "deb [arch=amd64] https://download.newrelic.com/infrastructure_agent/linux/apt bionic main" | sudo tee -a /etc/apt/sources.list.d/newrelic-infra.list && \
+            sudo apt-get update && \
+            sudo apt-get install newrelic-infra -y
 
-              sudo echo "POSTGRE_USER=${DbUsername}" >> /etc/environment
-              sudo echo "POSTGRE_PASS=${DbPassword}" >> /etc/environment
-              sudo echo "POSTGRE_ADDRESS=${DbInstance}" >> /etc/environment
-              sudo echo "pagerduty_token=${PagerDutyKey}" >> /etc/environment 
-              sudo apt-get update
+            sudo echo "POSTGRE_USER=${DbUsername}" >> /etc/environment
+            sudo echo "POSTGRE_PASS=${DbPassword}" >> /etc/environment
+            sudo echo "POSTGRE_ADDRESS=${DbInstance}" >> /etc/environment
+            sudo echo "pagerduty_token=${PagerDutyKey}" >> /etc/environment 
+            sudo apt-get update
 
-              wget --no-verbose -O /tmp/apache-maven-3.6.3.tar.gz http://archive.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
-              tar xzf /tmp/apache-maven-3.6.3.tar.gz -C /opt/
-              ln -s /opt/apache-maven-3.6.3 /opt/maven
-              ln -s /opt/maven/bin/mvn /usr/local/bin
-              rm -f /tmp/apache-maven-3.6.3.tar.gz
-              sudo echo "MAVEN_HOME=/opt/maven" >> /etc/environment
+            wget --no-verbose -O /tmp/apache-maven-3.6.3.tar.gz http://archive.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
+            tar xzf /tmp/apache-maven-3.6.3.tar.gz -C /opt/
+            ln -s /opt/apache-maven-3.6.3 /opt/maven
+            ln -s /opt/maven/bin/mvn /usr/local/bin
+            rm -f /tmp/apache-maven-3.6.3.tar.gz
+            sudo echo "MAVEN_HOME=/opt/maven" >> /etc/environment
 
-              sudo apt-get clean
-              sudo apt-get update
-              sudo apt-get install -y openjdk-8-jdk
-              sudo update-alternatives --config java
-              sudo update-alternatives --config javac
+            sudo apt-get clean
+            sudo apt-get update
+            sudo apt-get install -y openjdk-8-jdk
+            sudo update-alternatives --config java
+            sudo update-alternatives --config javac
   # LoadBalancer:
   #   Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer'
   #   Properties:
