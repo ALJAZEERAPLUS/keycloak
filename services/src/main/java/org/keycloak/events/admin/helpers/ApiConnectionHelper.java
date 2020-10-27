@@ -59,6 +59,11 @@ public class ApiConnectionHelper {
 
     private String updatePagerDutyUser(User user, HttpURLConnection httpClient, String userRole) throws IOException {
         httpClient = (HttpURLConnection) new URL(pagerdutyUrl+"/"+user.getId()).openConnection();
+        httpClient.setRequestMethod("PUT");
+        httpClient.setRequestProperty("User-Agent", "Mozilla/5.0");
+        httpClient.setRequestProperty("Accept", "application/vnd.pagerduty+json;version=2");
+        httpClient.setRequestProperty("Content-Type", "application/json");
+        httpClient.setRequestProperty("Authorization", "Token token="+System.getenv("pagerduty_token"));
         httpClient.setDoOutput(true);
         OutputStreamWriter writer = new OutputStreamWriter(httpClient.getOutputStream());
         String payload = "{\"user\":{\"type\": \"user\",\"name\": \""
@@ -68,11 +73,6 @@ public class ApiConnectionHelper {
             "\",\"role\": \""
             +userRole+
         "\"}}";
-        httpClient.setRequestMethod("PUT");
-        httpClient.setRequestProperty("User-Agent", "Mozilla/5.0");
-        httpClient.setRequestProperty("Accept", "application/vnd.pagerduty+json;version=2");
-        httpClient.setRequestProperty("Content-Type", "application/json");
-        httpClient.setRequestProperty("Authorization", "Token token="+System.getenv("pagerduty_token"));
         writer.write(payload);
         writer.flush();
         writer.close();
