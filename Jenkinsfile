@@ -103,7 +103,7 @@ pipeline {
                                     sudo /bin/cp -rf ./modules/postgresql keycloak-12.0.0-SNAPSHOT/modules/system/layers/keycloak/org/
                                     sudo /bin/cp -f ./modules/standalone.xml keycloak-12.0.0-SNAPSHOT/standalone/configuration/
                                     sudo ./keycloak-12.0.0-SNAPSHOT/bin/add-user-keycloak.sh -r master -u ${AdminUsername} -p ${AdminPassword}
-                                    nohup sudo ./keycloak-12.0.0-SNAPSHOT/bin/standalone.sh -b $PRIV_IP &
+                                    nohup sudo ./keycloak-12.0.0-SNAPSHOT/bin/standalone.sh -b $PRIV_IP > keycloak.out 2> keycloak.error < /dev/null &
                                 "
                             '''                        
                         }
