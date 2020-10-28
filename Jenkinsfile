@@ -100,9 +100,8 @@ pipeline {
                                     fi
                                     sudo mvn -Pdistribution -pl distribution/server-dist -am -Dmaven.test.skip clean install
                                     sudo tar xfz distribution/server-dist/target/keycloak-12.0.0-SNAPSHOT.tar.gz
-                                    sudo mv ./modules/postgresql keycloak-12.0.0-SNAPSHOT/modules/system/layers/keycloak/org/
-                                    sudo rm keycloak-12.0.0-SNAPSHOT/standalone/configuration/standalone.xml
-                                    sudo mv ./modules/standalone.xml keycloak-12.0.0-SNAPSHOT/standalone/configuration/
+                                    sudo /bin/cp -rf ./modules/postgresql keycloak-12.0.0-SNAPSHOT/modules/system/layers/keycloak/org/
+                                    sudo /bin/cp -f ./modules/standalone.xml keycloak-12.0.0-SNAPSHOT/standalone/configuration/
                                     sudo ./keycloak-12.0.0-SNAPSHOT/bin/add-user-keycloak.sh -r master -u ${AdminUsername} -p ${AdminPassword}
                                     nohup sudo ./keycloak-12.0.0-SNAPSHOT/bin/standalone.sh -b $PRIV_IP &
                                 "
