@@ -85,6 +85,7 @@ pipeline {
                                 --query "Reservations[*].Instances[*].PublicIpAddress" \
                                 --output=text`
                                 echo $INSTANCE_ADDRESS
+                                echo `curl checkip.amazonaws.com`
                                 ssh -o StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS "
                                     if [ ! -d keycloak ] ; then
                                         git clone https://github.com/ALJAZEERAPLUS/keycloak.git
