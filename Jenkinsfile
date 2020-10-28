@@ -84,8 +84,12 @@ pipeline {
                                 export INSTANCE_ADDRESS=`aws --region eu-west-1 ec2 describe-instances --filters "Name=tag:Name,Values=Keycloak-Shared" \
                                 --query "Reservations[*].Instances[*].PublicIpAddress" \
                                 --output=text`
+                                export PRIV_IP=`aws --region eu-west-1 ec2 describe-instances --filters "Name=tag:Name,Values=Keycloak-Shared" \
+                                --query "Reservations[*].Instances[*].PrivateIpAddress" \
+                                --output=text`
                                 echo $INSTANCE_ADDRESS
                                 echo `curl checkip.amazonaws.com`
+                                ssh -o StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS "export PRIV_IP=$PRIV_IP"
                                 ssh -o StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS "
                                     if [ ! -d keycloak ] ; then
                                         git clone https://github.com/ALJAZEERAPLUS/keycloak.git
@@ -100,7 +104,7 @@ pipeline {
                                     sudo rm keycloak-12.0.0-SNAPSHOT/standalone/configuration/standalone.xml
                                     sudo mv ./modules/standalone.xml keycloak-12.0.0-SNAPSHOT/standalone/configuration/
                                     sudo ./keycloak-12.0.0-SNAPSHOT/bin/add-user-keycloak.sh -r master -u ${AdminUsername} -p ${AdminPassword}
-                                    nohup sudo ./keycloak-12.0.0-SNAPSHOT/bin/standalone.sh -b `ip -4 -o addr show dev eth0 |grep -Pom1 '(?<= inet )[0-9.]*'` &
+                                    nohup sudo ./keycloak-12.0.0-SNAPSHOT/bin/standalone.sh -b $PRIV_IP &
                                 "
                             '''                        
                         }
