@@ -90,20 +90,16 @@ pipeline {
                                 echo $INSTANCE_ADDRESS
                                 echo `curl checkip.amazonaws.com`
                                 ssh -o StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS "export PRIV_IP=$PRIV_IP"
+                                scp -o StrictHostKeyChecking=no distribution/server-dist/target/keycloak-12.0.0-SNAPSHOT.tar.gz ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
+                                scp -o StrictHostKeyChecking=no modules/standalone.xml ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
+                                scp -o StrictHostKeyChecking=no -r modules/postgresql ubuntu@$INSTANCE_ADDRESS:/home/ubuntu
                                 ssh -o StrictHostKeyChecking=no ubuntu@$INSTANCE_ADDRESS "
-                                    if [ ! -d keycloak ] ; then
-                                        git clone https://github.com/ALJAZEERAPLUS/keycloak.git
-                                        cd keycloak
-                                    else
-                                        cd keycloak
-                                        git pull
-                                    fi
-                                    sudo mvn -Pdistribution -pl distribution/server-dist -am -Dmaven.test.skip clean install
-                                    sudo tar xfz distribution/server-dist/target/keycloak-12.0.0-SNAPSHOT.tar.gz
-                                    sudo /bin/cp -rf ./modules/postgresql keycloak-12.0.0-SNAPSHOT/modules/system/layers/keycloak/org/
-                                    sudo /bin/cp -f ./modules/standalone.xml keycloak-12.0.0-SNAPSHOT/standalone/configuration/
-                                    sudo ./keycloak-12.0.0-SNAPSHOT/bin/add-user-keycloak.sh -r master -u ${AdminUsername} -p ${AdminPassword}
-                                    nohup sudo ./keycloak-12.0.0-SNAPSHOT/bin/standalone.sh -b $PRIV_IP > keycloak.out 2> keycloak.error < /dev/null &
+                                    sudo kill $(jobs -p)
+                                    tar xfz keycloak-12.0.0-SNAPSHOT.tar.gz
+                                    /bin/cp -rf postgresql keycloak-12.0.0-SNAPSHOT/modules/system/layers/keycloak/org/
+                                    /bin/cp -f standalone.xml keycloak-12.0.0-SNAPSHOT/standalone/configuration/
+                                    ./keycloak-12.0.0-SNAPSHOT/bin/add-user-keycloak.sh -r master -u ${AdminUsername} -p ${AdminPassword}
+                                    nohup ./keycloak-12.0.0-SNAPSHOT/bin/standalone.sh -b $PRIV_IP > keycloak.out 2> keycloak.error < /dev/null &
                                 "
                             '''                        
                         }
